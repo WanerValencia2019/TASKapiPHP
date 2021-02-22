@@ -5,7 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     header('Access-Control-Allow-Origin: *');
     header('Content-Type: application/json');
     
-    include './../database/connection.php';
+    require './../database/connection.php';
 
     $_POST = json_decode(file_get_contents('php://input'),true);
     //echo json_encode($_POST);
@@ -88,6 +88,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                  ]
              ];
              echo json_encode($response, JSON_UNESCAPED_UNICODE);
+         }else{
+             $response = [
+                 "error" => "Credentials  incorrects"
+             ];
+             http_response_code(401);
+             echo json_encode($response);
+             exit();
          }
     }
 
