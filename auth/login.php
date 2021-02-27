@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $_POST = json_decode(file_get_contents('php://input'),true);
     //echo json_encode($_POST);
 
-    $sql_user = "SELECT username, email, id, pwd FROM users WHERE  username = ? OR email = ?";
+    $sql_user = "SELECT first_name,last_name,username, email, id, pwd FROM users WHERE  username = ? OR email = ?";
     function generateToken(){
         //GENERATE RANDOM BINARY DATA
         $token = openssl_random_pseudo_bytes(20); 
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!$sentencia = $connection->prepare($sql_user)){
         echo "Falló la preparación: (" . $connection->errno . ") " . $connection->error;
     }
-    if(addslashes((!isset($_POST['username'])) || !isset($_POST['username'])) || !isset($_POST['username'])){
+    if(addslashes((!isset($_POST['username'])) || !isset($_POST['username'])) || !isset($_POST['password'])){
         http_response_code(200);
         $params_required = [ 
             'params_required' => [
@@ -73,15 +73,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
     if (!$sentencia -> execute()){
+        echo "error";
     }
     else {
          $result = $sentencia ->get_result();
          $data = $result ->fetch_assoc();
          $password = password_verify(addslashes($_POST['password']),$data['pwd']);
-         if($password){
+         if($password==true  && isset($data)){
              $user_token= getOrCreateToken($data['id'],$connection);
              $response = [
                  'data' => [
+                     'first_name'=>$data['first_name'],
+                     'last_name'=>$data['last_name'],
                      'username'=>$data['username'],
                      'email' => $data['email'],
                      'token' => $user_token
