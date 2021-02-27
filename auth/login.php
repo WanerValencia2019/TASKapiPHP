@@ -48,14 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     if(addslashes((!isset($_POST['username'])) || !isset($_POST['username'])) || !isset($_POST['password'])){
         http_response_code(200);
-        $params_required = [ 
-            'params_required' => [
-                'username' => 'or email',
-                'email' => 'or username',
-                'password' => '',
-            ]
+        $response = [ 
+            'message' => 'params requireds (username and password)'
         ];
-        echo json_encode(['error' =>  $params_required ],JSON_UNESCAPED_UNICODE);
+        echo json_encode($response,JSON_UNESCAPED_UNICODE);
         exit();
     }   
     if(!isset($_POST['username'])){
@@ -69,6 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $email = addslashes($_POST['email']);
     }
 
+    $password = addslashes($_POST['password']);
+
     $sentencia->bind_param('ss',$username,$email);
 
 
@@ -78,8 +76,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     else {
          $result = $sentencia ->get_result();
          $data = $result ->fetch_assoc();
-         $password = password_verify(addslashes($_POST['password']),$data['pwd']);
-         if($password==true  && isset($data)){
+         if (isset($data)) {
+            $password_verified = password_verify($password, $data['pwd']);
+         }else {
+            $password_verified = false;
+         }
+
+         if($password_verified==true){
              $user_token= getOrCreateToken($data['id'],$connection);
              $response = [
                  'data' => [
@@ -93,10 +96,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
              echo json_encode($response, JSON_UNESCAPED_UNICODE);
          }else{
              $response = [
-                 "error" => "Credentials  incorrects"
+                 "message" => "Credentials  incorrects"
              ];
              http_response_code(401);
-             echo json_encode($response);
+             echo json_encode($response, JSON_UNESCAPED_UNICODE);
              exit();
          }
     }
