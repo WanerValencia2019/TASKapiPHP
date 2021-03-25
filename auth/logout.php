@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     function tokenError(){
         $response = [
-            "error" => "Bad token authentication"
+            "message" => "Bad token authentication"
         ];
         http_response_code(401);
         echo json_encode($response);
@@ -15,10 +15,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $headers = apache_request_headers();
 
-    if (isset($headers['Authorization'])) {    
+    if (isset($headers['authorization'])) {    
         include './../database/connection.php';
 
-        $token = $headers['Authorization'];
+        $token = $headers['authorization'];
         $conn = $connection;
         $sql="DELETE FROM auth_tokens WHERE token = ?";
 

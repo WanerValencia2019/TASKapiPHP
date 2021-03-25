@@ -1,6 +1,6 @@
 <?php
 
-if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     header('Access-Control-Allow-Origin: *');
     header('Content-Type: application/json');

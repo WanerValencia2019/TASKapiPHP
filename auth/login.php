@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "Falló la preparación: (" . $connection->errno . ") " . $connection->error;
     }
     if(addslashes((!isset($_POST['username'])) || !isset($_POST['username'])) || !isset($_POST['password'])){
-        http_response_code(200);
+        http_response_code(401);
         $response = [ 
             'message' => 'params requireds (username and password)'
         ];
@@ -86,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
              $user_token= getOrCreateToken($data['id'],$connection);
              $response = [
                  'data' => [
+                 	 'id'=>$data['id'],
                      'first_name'=>$data['first_name'],
                      'last_name'=>$data['last_name'],
                      'username'=>$data['username'],
