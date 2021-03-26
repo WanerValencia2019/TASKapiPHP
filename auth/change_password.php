@@ -7,14 +7,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     function tokenError(){
         $response = [
-            "error" => "Bad token authentication"
+            "message" => "Bad token authentication"
         ];
         http_response_code(401);
         echo json_encode($response);
     }
     function paramsError($msg){
         $response = [
-            "error" => $msg
+            "message" => $msg
         ];
         http_response_code(401);
         echo json_encode($response);
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $headers = apache_request_headers();
     $_PUT = json_decode(file_get_contents('php://input'),true);
 
-    if(!isset($_PUT['username']) | !isset($_PUT['password']) | !isset($_PUT['password_confirm']) ){
+    if(!isset($_PUT['username']) || !isset($_PUT['password']) || !isset($_PUT['password_confirm']) || !isset($_PUT['old_password'])){
         paramsError('parameters required (username, password, password_confirm)');
         exit();
     }
@@ -72,14 +72,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    if (isset($headers['Authorization'])) {    
+    if (isset($headers['authorization'])) {    
         include './../database/connection.php';
 
         $username = $_PUT['username'];
         $old_password = $_PUT['old_password'];
         $password = $_PUT['password'];
         $password_confirm = $_PUT['password_confirm'];
-        $token = $headers['Authorization'];
+        $token = $headers['authorization'];
         $conn = $connection;
 
         $user = tokenUsernameVerify($conn,$token,$username);

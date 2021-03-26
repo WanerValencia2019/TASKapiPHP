@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $params_required = [ 
             'message' => 'Params required (username, first_name, last_name, email, password)'
         ];
-        echo json_encode($response,JSON_UNESCAPED_UNICODE);
+        echo json_encode($params_required,JSON_UNESCAPED_UNICODE);
         exit();
     }   
     $username = addslashes($_POST['username']);
